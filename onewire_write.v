@@ -5,8 +5,6 @@ module onewire_write (
     output reg done,
     output reg drive_low
 );
-    localparam WRITE = 3'b001;
-
     reg [$clog2(70*27):0] delay_counter = 0;
     reg [3:0] op_idx = 4'd0;
 
