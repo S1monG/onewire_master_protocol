@@ -74,13 +74,14 @@ module onewire_master (
         .clk(clk),
         .enable(read_enable),
         .drive_low(read_drive_low),
-        .data_out(data_out),
+        .sample(), // TODO: add sample signal to read module
         .done(read_done)
     );
     onewire_reset reset (
         .clk(clk),
         .enable(reset_enable),
         .drive_low(reset_drive_low),
+        .sample(), // TODO: add sample signal to reset module
         .done(reset_done)
     );
     
