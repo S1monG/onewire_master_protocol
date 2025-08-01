@@ -31,6 +31,7 @@ module onewire_write ( // TODO: make generic number of writes with parameters
                 delay_counter <= delay_counter + 1;
             end
         end
+        // If done and enable, hold all current values
     end
 
 endmodule
