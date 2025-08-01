@@ -19,6 +19,13 @@ module onewire_master (
     reg reset_enable, write_enable, read_enable;
     wire reset_drive_low, write_drive_low, read_drive_low;
     wire write_done, read_done, reset_done;
+    wire reset_sample, read_sample;
+
+    reg device_present; // TODO: Do something with if device not precent
+    
+    // idx will always be <8. It is 4 bits wide because that makes the read module easier.
+    reg [7:0] data_out; 
+    wire [3:0] data_out_idx;
 
     // Drives the onewire low or releases it based on the current state
     wire drive_low;
@@ -42,6 +49,8 @@ module onewire_master (
                     state <= WRITE;
                     reset_enable <= 1'b0;
                     write_enable <= 1'b1;
+                end else if (reset_sample) begin
+                    device_present <= (onewire == 1'b0);
                 end
             end
             WRITE: begin
@@ -55,14 +64,15 @@ module onewire_master (
                 if (read_done) begin
                     state <= IDLE;
                     read_enable <= 0;
+                end else if (read_sample) begin
+                    data_out[data_out_idx] <= onewire;
                 end
             end
         endcase
     end
 
     wire [7:0] operation;
-    wire [7:0] data_out;
-
+    
     onewire_write write(
         .clk(clk), 
         .operation(operation), 
@@ -74,14 +84,15 @@ module onewire_master (
         .clk(clk),
         .enable(read_enable),
         .drive_low(read_drive_low),
-        .sample(), // TODO: add sample signal to read module
-        .done(read_done)
+        .sample(read_sample),
+        .done(read_done),
+        .sample_idx(data_out_idx)
     );
     onewire_reset reset (
         .clk(clk),
         .enable(reset_enable),
         .drive_low(reset_drive_low),
-        .sample(), // TODO: add sample signal to reset module
+        .sample(reset_sample),
         .done(reset_done)
     );
     
