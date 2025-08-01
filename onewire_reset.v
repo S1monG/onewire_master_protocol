@@ -7,7 +7,6 @@ module onewire_reset (
 );
     reg [$clog2(960*27):0] delay_counter;
 
-    // Timing parameters
     localparam DRIVE_TIME = 480 * 27;
     localparam SAMPLE_POINT = 550 * 27;
     localparam TOTAL_TIME = 960 * 27;
